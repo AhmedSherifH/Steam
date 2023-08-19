@@ -2,8 +2,7 @@ from steam import Steam
 from decouple import config
 from datetime import datetime
 
-steam = Steam("F661D16714DC5E358FFCF59EAC4FAD17")
-
+steam = Steam("TOKEN")
 errorMessage = "User not found."
 
 def steamgetuser(user, identifier):
