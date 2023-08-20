@@ -37,13 +37,13 @@ async def user(ctx, args):
 async def game(ctx, *, args):
     try:
         game = str(args)
-        gameInformation = await steamgetgamepage(game, ctx)
+        gameInformation = steamgetgamepage(game, ctx)
         gamePageMenu = GameMenuView(gameInformation, ctx)
         embed = gameInformationEmbed(gameInformation)
-        await ctx.send(embed=embed, view=gamePageMenu)
+        await ctx.send(embed=embed, view=gamePageMenu) 
     except:
         game = str(args)
-        availableGames = await steamgetgamepage(game, ctx)
+        availableGames = steamgetgamepage(game, ctx)
         embed = availableGamesEmbed(availableGames)
         await ctx.send(embed=embed)
 
@@ -80,8 +80,18 @@ class GameMenuView(discord.ui.View):
     @discord.ui.button(label="Achievements", emoji="🏆")
     async def achievements_Button(
         self, interaction: discord.Interaction, button: discord.ui.Button):
-        showachievementsEmbed = achievementsEmbed(self.gameInformation)
-        await interaction.response.edit_message(embed=showachievementsEmbed)
+        try:
+         showachievementsEmbed = achievementsEmbed(self.gameInformation)
+         await interaction.response.edit_message(embed=showachievementsEmbed)
+        except:
+            embed = discord.Embed(title="Highlighted Achievements")
+            embed.add_field(name="", value="No achievements found.")
+            await interaction.response.edit_message(embed=embed)
+    @discord.ui.button(label="Game Overview", emoji="🎮")
+    async def game_overview_Button(
+        self, interaction: discord.Interaction, button: discord.ui.Button):
+        showGamePage = gameInformationEmbed(self.gameInformation)   
+        await interaction.response.edit_message(embed=showGamePage)
 
 
 
@@ -104,6 +114,7 @@ def ownedGamesEmbed(steamAccount, ctx):
     embed = discord.Embed(title=f"{steamAccount[5]}'s Games")
     embed.set_thumbnail(url=steamAccount[1])
     embed.set_footer(text=f"Number of owned games: {returnedOwnedGames[0]}")
+
     for x in range(int(returnedOwnedGames[0])):
         playtime = round(int(returnedOwnedGames[1][x]["playtime_forever"]) / 60)
         embed.add_field(
@@ -128,10 +139,10 @@ def friendsEmbed(steamAccount, ctx):
 
 
 def gameInformationEmbed(gameInformation):
-    embed = discord.Embed(title=gameInformation[0])
+    embed = discord.Embed(title=f"{gameInformation[0]}")
     embed.add_field(name="Description", value=gameInformation[1], inline=True)
     embed.add_field(name="Price", value=gameInformation[4], inline=False)
-    embed.set_image(url=gameInformation[2])
+    embed.set_image(url=f"{gameInformation[2]}")
     return embed
 
 
@@ -144,9 +155,13 @@ def availableGamesEmbed(availableGames):
     return embed
 
 def achievementsEmbed(gameInfromation):
-   embed = discord.Embed(title="Available Achievements")
-   embed.set_footer(text=f"Number of achievements: {gameInfromation[5]['total']}")
-   embed.add_field(name="", value="")
+   embed = discord.Embed(title="Highlighted Achievements")
+   embed.set_footer(text=f"Total Number of Achievements: {gameInfromation[5]['total']}")
+   numbering = 1
+   for x in range(len(gameInfromation[5]["highlighted"])):
+     achievement = gameInfromation[5]["highlighted"][x]["name"]
+     embed.add_field(name="", value=f"{numbering}: {achievement}", inline=True)
+     numbering += 1
    return embed
 
 bot.run("TOKEN")
