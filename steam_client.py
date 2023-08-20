@@ -6,6 +6,7 @@ steam = Steam("TOKEN")
 errorMessage = "User not found."
 
 def steamgetuser(user, identifier):
+
   print("Fetching Account...")
   
   if identifier == 0:
@@ -40,25 +41,27 @@ def steamgetuser(user, identifier):
       online_status = "Looking to Play"
 
   level = steam.users.get_user_steam_level(steamid)
-  #{'player_level': 16}
   level = str(level).replace("{'player_level': ", "").replace("}", "")
-  #16   
   steamAccountInfo = [steamid, avatarfull, creation_date, online_status, level, persona_name, badges]
+
   print("Retrieved Account.")
+
   return steamAccountInfo
 
 
-def steamgetownedgames(id):
+def steamgetownedgames(id, ctx):
   print("Fetching owned games...")
+
   gamesDict = steam.users.get_owned_games(id)
   numberofOwnedGames = gamesDict["game_count"]
   games = gamesDict["games"]
-
   ownedGamesInformation = [numberofOwnedGames, games]
+
   print("Retrieved Games.")
   return ownedGamesInformation
 
 def steamgetfriends(id):
+
   print("Fetching friends list...")
   friendslist = dict(steam.users.get_user_friends_list(id))
   print("Retrieved Friends List.")
@@ -67,12 +70,15 @@ def steamgetfriends(id):
 def steamgetgamepage(game, ctx):
   requestedGameFound = False
   gameSearch = dict(steam.apps.search_games(game))
+
   for x in range(len(gameSearch["apps"])):
     apiGame = gameSearch["apps"][x]["name"].lower().replace("\\u2122", "").replace("\\u00ae","").replace("\\u2019", "'")
+
     if apiGame == game.lower():
       requestedGameFound = True
       gameID = gameSearch["apps"][x]["id"]
       gamePrice = gameSearch["apps"][x]["price"]
+
       if gamePrice == "" :
         gamePrice = "Unspecified"
         return
@@ -83,21 +89,25 @@ def steamgetgamepage(game, ctx):
     
   if requestedGameFound == True:
      gamePage = steam.apps.get_app_details(gameID)
-     print(gamePage)
      gameName = gamePage[str(gameID)]["data"]["name"]
+
      try:
       gameAchievements = gamePage[str(gameID)]["data"]["achievements"]
      except:
        gameAchievements = None
+
      gameDescription = gamePage[str(gameID)]["data"]["short_description"]
      gameImage = gamePage[str(gameID)]["data"]["header_image"]
      gameInformation = [gameName, gameDescription, gameImage, gameSearch, gamePrice, gameAchievements]
+
      return gameInformation
   elif requestedGameFound == False:
      availableGames = []
      for x in range(len(gameSearch["apps"])):
+
       apiGame = gameSearch["apps"][x]["name"].replace("\\u2122", "").replace("\\u00ae","").replace("\\u2019", "'")
       availableGames.append(apiGame)
+
      if len(availableGames) != 0:
        return availableGames
 
