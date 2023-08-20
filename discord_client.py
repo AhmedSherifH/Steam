@@ -33,13 +33,11 @@ async def game(ctx, *, args):
         gameInformation = steamgetgamepage(game, ctx)
         gamePageMenu = gamemenuView(gameInformation, ctx)
         embed = gameInformationEmbed(gameInformation)
-
         await ctx.send(embed=embed, view=gamePageMenu) 
     except:
         game = str(args)
         availableGames = steamgetgamepage(game, ctx)
         embed = availableGamesEmbed(availableGames)
-
         await ctx.send(embed=embed)
 
 
@@ -50,24 +48,18 @@ class profilemenuView(discord.ui.View):
         super().__init__()
 
     @discord.ui.button(label="Owned Games", emoji="🎮")
-    async def games_button(self, interaction: discord.Interaction,
-                           button: discord.ui.Button):
-
+    async def games_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         newGamesPage =  ownedGamesEmbed(self.steamAccount, self.ctx)
         if newGamesPage != None:
          await interaction.response.edit_message(embed=newGamesPage)
 
     @discord.ui.button(label="Profile Summary", emoji="🧭")
-    async def profile_button(
-        self, interaction: discord.Interaction,
-        button: discord.ui.Button):
-
+    async def profile_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         newProfilePage = summaryEmbed(self.steamAccount)
         await interaction.response.edit_message(embed=newProfilePage)
 
     @discord.ui.button(label="Friends List", emoji="🙎‍♂️")
-    async def friends_button(self, interaction: discord.Interaction,
-                             button: discord.ui.Button):
+    async def friends_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         newfriendsPage = friendsEmbed(self.steamAccount, self.ctx)
         await interaction.response.edit_message(embed=newfriendsPage)
 
@@ -78,27 +70,17 @@ class gamemenuView(discord.ui.View):
         super().__init__()
 
     @discord.ui.button(label="Achievements", emoji="🏆")
-    async def achievements_Button(
-        self, interaction: discord.Interaction,
-        button: discord.ui.Button):
-
+    async def achievements_Button(self, interaction: discord.Interaction, button: discord.ui.Button):
         try:
-         
          showachievementsEmbed = achievementsEmbed(self.gameInformation)
          await interaction.response.edit_message(embed=showachievementsEmbed)
-
         except:
-
             embed = discord.Embed(title="Highlighted Achievements")
             embed.add_field(name="", value="No achievements found.")
-            
             await interaction.response.edit_message(embed=embed)
 
     @discord.ui.button(label="Game Overview", emoji="🎮")
-    async def game_overview_Button(
-        self, interaction: discord.Interaction,
-        button: discord.ui.Button):
-
+    async def game_overview_Button(self, interaction: discord.Interaction, button: discord.ui.Button):
         showGamePage = gameInformationEmbed(self.gameInformation)   
         await interaction.response.edit_message(embed=showGamePage)
 
@@ -190,7 +172,8 @@ def availableGamesEmbed(availableGames):
 
     for game in availableGames:
         embed.add_field(name="", 
-                        value=f"{numbering}: {game}", inline=False)
+                        value=f"{numbering}: {game}", 
+                        inline=False)
         numbering += 1
 
     return embed
@@ -203,7 +186,7 @@ def achievementsEmbed(gameInfromation):
 
    for x in range(len(gameInfromation[5]["highlighted"])):
      achievement = gameInfromation[5]["highlighted"][x]["name"]
-
+     
      embed.add_field(name="", 
                      value=f"{numbering}: {achievement}", 
                      inline=True)
