@@ -3,69 +3,91 @@ from decouple import config
 from datetime import datetime
 
 steam = Steam("TOKEN")
-errorMessage = "User not found."
+
+
 
 def steamgetuser(user, identifier):
 
   print("Fetching Account...")
   
   if identifier == 0:
-    userdetails = dict(steam.users.search_user(user))
+     userdetails = dict(steam.users.search_user(user))
   if identifier == 1:
-    userdetails = dict(steam.users.get_user_details(user))
-  
+     userdetails = dict(steam.users.get_user_details(user))
 
+
+  print(userdetails["player"])
   steamid = userdetails["player"]["steamid"]
   avatarfull = userdetails["player"]["avatarfull"]
-  creation_timestamp = userdetails["player"]["timecreated"]
-  persona_state = userdetails["player"]["personastate"]
   persona_name = userdetails["player"]["personaname"]
-  online_status = ""
-  badges = steam.users.get_user_badges(steamid)
-  creation_date = datetime.fromtimestamp(creation_timestamp)
+  communityvisiblity = userdetails["player"]["communityvisibilitystate"]
+  
+  if communityvisiblity == 3:
+   creation_timestamp = userdetails["player"]["timecreated"]
+   creation_date = datetime.fromtimestamp(creation_timestamp)
+   persona_state = userdetails["player"]["personastate"]
+   online_status = ""
+   badges = steam.users.get_user_badges(steamid)
 
-  match persona_state:
-    case 0:
-      online_status = "Offline"
-    case 1:
-      online_status = "Online"
-    case 2:
-      online_status = "Busy"
-    case 3:
-      online_status = "Away"
-    case 4:
-      online_status = "Snooze"
-    case 5:
-      online_status = "Looking to Trade"
-    case 6:
-      online_status = "Looking to Play"
+   match persona_state:
+     case 0:
+       online_status = "Offline"
+     case 1:
+       online_status = "Online"
+     case 2:
+       online_status = "Busy"
+     case 3:
+       online_status = "Away"
+     case 4:
+       online_status = "Snooze"
+     case 5:
+       online_status = "Looking to Trade"
+     case 6:
+       online_status = "Looking to Play"
 
-  level = steam.users.get_user_steam_level(steamid)
-  level = str(level).replace("{'player_level': ", "").replace("}", "")
-  steamAccountInfo = [steamid, avatarfull, creation_date, online_status, level, persona_name, badges]
+   level = steam.users.get_user_steam_level(steamid)
+   level = str(level).replace("{'player_level': ", "").replace("}", "")
+   steamAccountInfo = [steamid, avatarfull, persona_name, online_status, level, creation_date, badges]
+   print("Retrieved Account.")
+   return steamAccountInfo
 
-  print("Retrieved Account.")
 
-  return steamAccountInfo
+  else: 
+    steamAccountInfo = [steamid, avatarfull, persona_name]
+    print("Retrieved Account.")
+    return steamAccountInfo
+  
+  
+
 
 
 def steamgetownedgames(id, ctx):
   print("Fetching owned games...")
 
   gamesDict = steam.users.get_owned_games(id)
-  numberofOwnedGames = gamesDict["game_count"]
-  games = gamesDict["games"]
-  ownedGamesInformation = [numberofOwnedGames, games]
+  
+  if len(gamesDict) != 0:
+   numberofOwnedGames = gamesDict["game_count"]
+   games = gamesDict["games"]
+   ownedGamesInformation = [numberofOwnedGames, games]
+   print("Retrieved Games.")
 
-  print("Retrieved Games.")
-  return ownedGamesInformation
+   return ownedGamesInformation
+  
+  else:
+    ownedGamesInformation = None
+    return ownedGamesInformation
+    
+
 
 def steamgetfriends(id):
 
-  print("Fetching friends list...")
-  friendslist = dict(steam.users.get_user_friends_list(id))
-  print("Retrieved Friends List.")
-  return friendslist
+   print("Fetching friends list...")
+   friendslist = dict(steam.users.get_user_friends_list(id))  
+   print("Retrieved Friends List.")
+   return friendslist
+  
+
 
 def steamgetgamepage(game, ctx):
   requestedGameFound = False
@@ -98,7 +120,9 @@ def steamgetgamepage(game, ctx):
 
      gameDescription = gamePage[str(gameID)]["data"]["short_description"]
      gameImage = gamePage[str(gameID)]["data"]["header_image"]
-     gameInformation = [gameName, gameDescription, gameImage, gameSearch, gamePrice, gameAchievements]
+     gameDevs = gamePage[str(gameID)]["data"]["developers"]
+     gameInformation = [gameName, gameDescription, gameImage, gameSearch, gamePrice, gameAchievements, gameDevs]
+     
 
      return gameInformation
   elif requestedGameFound == False:
