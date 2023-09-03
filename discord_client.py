@@ -29,6 +29,7 @@ async def help(ctx):
    embed.add_field(name="My prefix is `!`",
                   value="**__Commands__** \n > :adult: `!user <steam-username>`: Returns steam account information. \n > :id: `!userid <steam-id>`: Returns steam account information. \n > :video_game: `!game <game-name>`: Returns game information including the price, description and developers. \n > :link: `!link <steam-id>`: Add your profile to the bot's database where you'll be able to retrieve your account's information by using `!profile` \n > :x: `!unlink`: Remove the steam account that's linked.")
    embed.add_field(name="**__Tips__**", value="> :arrow_right: Press the `Owned Games` and `Friends List` buttons multiple times to navigate through pages. \n > :arrow_right: The `!game` command has a search function; it returns a list of games that have similar names. The search is usually executed automatically when there is a misspelling or missing keywords.", inline=False)
+   embed.description = "This bot is open source. Feel free to contribute on [Github](https://github.com/AhmedSherifH/Steam/)"
    await ctx.send(embed=embed)
    
 
@@ -301,6 +302,13 @@ def gameInformationEmbed(gameInformation):
                     value=gameInformation[4],
                     inline=True)
 
+    embed.add_field(name="Publishers",
+                    value=",\n".join(gameInformation[7]),
+                    inline=False)
+    
+    embed.add_field(name="Recommendations",
+                    value=gameInformation[8])
+   
     embed.set_image(url=f"{gameInformation[2]}")
 
     return embed

@@ -1,1 +1,4 @@
-/token
+token
+profiles.db
+.gitignore
+__pycache__/steam_client.cpython-311.pyc

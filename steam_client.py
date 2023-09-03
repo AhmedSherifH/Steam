@@ -121,7 +121,9 @@ def steamgetgamepage(game, ctx):
      gameDescription = gamePage[str(gameID)]["data"]["short_description"]
      gameImage = gamePage[str(gameID)]["data"]["header_image"]
      gameDevs = gamePage[str(gameID)]["data"]["developers"]
-     gameInformation = [gameName, gameDescription, gameImage, gameSearch, gamePrice, gameAchievements, gameDevs]
+     gamePublishers = gamePage[str(gameID)]["data"]["publishers"]
+     recommendations = gamePage[str(gameID)]["data"]["recommendations"]["total"]
+     gameInformation = [gameName, gameDescription, gameImage, gameSearch, gamePrice, gameAchievements, gameDevs, gamePublishers, recommendations]
      
 
      return gameInformation
