@@ -10,12 +10,7 @@
 
 ## Screenshots
 
-![Game Showcase](https://imgur.com/eh31Z4j)
-
-![Game Showcase](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-![Game Showcase](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
+![Game Showcase](https://github.com/AhmedSherifH/Steam-Information-Bot/blob/main/Repository%20%20Assets/Game%20Showcase.PNG)
 
 ## Acknowledgements
 
