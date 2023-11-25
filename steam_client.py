@@ -2,7 +2,7 @@ from steam import Steam
 from decouple import config
 from datetime import datetime
 
-steam = Steam("TOKEN")
+steam = Steam("token")
 
 
 
@@ -95,7 +95,7 @@ def steamgetgamepage(game, ctx):
 
   for x in range(len(gameSearch["apps"])):
     apiGame = gameSearch["apps"][x]["name"].lower().replace("\\u2122", "").replace("\\u00ae","").replace("\\u2019", "'")
-
+  
     if apiGame == game.lower():
       requestedGameFound = True
       gameID = gameSearch["apps"][x]["id"]
@@ -112,7 +112,7 @@ def steamgetgamepage(game, ctx):
   if requestedGameFound == True:
      gamePage = steam.apps.get_app_details(gameID)
      gameName = gamePage[str(gameID)]["data"]["name"]
-
+     
      try:
       gameAchievements = gamePage[str(gameID)]["data"]["achievements"]
      except:
@@ -122,12 +122,16 @@ def steamgetgamepage(game, ctx):
      gameImage = gamePage[str(gameID)]["data"]["header_image"]
      gameDevs = gamePage[str(gameID)]["data"]["developers"]
      gamePublishers = gamePage[str(gameID)]["data"]["publishers"]
-     recommendations = gamePage[str(gameID)]["data"]["recommendations"]["total"]
+     try:
+      recommendations = gamePage[str(gameID)]["data"]["recommendations"]["total"]
+     except:
+       recommendations = "N/A"
      gameInformation = [gameName, gameDescription, gameImage, gameSearch, gamePrice, gameAchievements, gameDevs, gamePublishers, recommendations]
      
 
      return gameInformation
-  elif requestedGameFound == False:
+  
+  if requestedGameFound == False:
      availableGames = []
      for x in range(len(gameSearch["apps"])):
 

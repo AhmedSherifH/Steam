@@ -2,7 +2,7 @@ from typing import Optional
 from datetime import datetime
 import discord
 from discord.ext import commands
-from discord.ui import *
+from discord.ui import   *
 from steam_client import *
 import discord.utils
 import math
@@ -83,18 +83,19 @@ async def link(ctx, *, args):
 
 @bot.command()
 async def profile(ctx):
-  try: 
-   discordID = ctx.author.id
+   discordID = ctx.message.author.id
    cursor.execute(f"SELECT steam_id FROM profiles WHERE discord_id = {discordID}")
    row = cursor.fetchall()
+
+   try: 
    #[('76561198434096480',)]
-   id = str(row).replace("[", "").replace('"', "").replace("(", "").replace("'", "")   
-   id = id.replace(",", "").replace(")", "").replace("]", "")
-   steamAccount = steamgetuser(id, identifier=1)
-   profileMenu = profilemenuView(steamAccount, ctx)
-   embed = summaryEmbed(steamAccount)
-   await ctx.send(embed=embed, view = profileMenu)
-  except Exception as e:
+    id = str(row).replace("[", "").replace('"', "").replace("(", "").replace("'", "")   
+    id = id.replace(",", "").replace(")", "").replace("]", "")
+    steamAccount = steamgetuser(id, identifier=1)
+    profileMenu = profilemenuView(steamAccount, ctx)
+    embed = summaryEmbed(steamAccount)
+    await ctx.send(embed=embed, view = profileMenu)
+   except Exception as e:
      if str(e) == "list index out of range":
       embed = discord.Embed(title="User does not have a connected account.")
       await ctx.send(embed=embed)   
@@ -117,9 +118,9 @@ class linkingmenuView(discord.ui.View):
    @discord.ui.button(label="Link", emoji="🔗")
    async def link_account(self, interaction: discord.Interaction, button: discord.ui.Button):
      try:
-      cursor.execute(f"INSERT INTO profiles VALUES('{self.discordID}', '{self.steamID}')")
+      cursor.execute(f"INSERT INTO profiles VALUES('{self.discordID}', '{self.steamID}')") 
       db.commit()
-      embed = discord.Embed(title="Linking successful")
+      embed = discord.Embed(title="Linking successful") 
       await interaction.response.edit_message(embed=embed, view=None)
      except Exception as e:
         if str(e) == "UNIQUE constraint failed: profiles.steam_id" or str(e) == "UNIQUE constraint failed: profiles.discord_id":
@@ -288,12 +289,11 @@ def friendsEmbed(steamAccount, ctx, index):
 
 def gameInformationEmbed(gameInformation):
     embed = discord.Embed(title=f"{gameInformation[0]}")
-
+    
     embed.add_field(name="Description", 
                     value=gameInformation[1],
                      inline=False)
     
-
     embed.add_field(name="Developers",
                     value=",\n".join(gameInformation[6]),
                     inline=True)
@@ -347,5 +347,5 @@ def linkingEmbed(steamInformation):
    embed.set_image(url=steamInformation[1])
    return embed
 
-bot.run("TOKEN")
+bot.run("token")
 
